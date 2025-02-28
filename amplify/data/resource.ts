@@ -10,6 +10,7 @@ const schema = a.schema({
   Todo: a
     .model({
       content: a.string(),
+      imagePath: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
 });
@@ -26,6 +27,7 @@ export const data = defineData({
     },
   },
 });
+
 
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a
