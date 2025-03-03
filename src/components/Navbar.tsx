@@ -9,7 +9,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, signOut }) => {
   return (
     <nav className="bg-blue-600 p-4">
       <div className="container mx-auto flex justify-between items-center">
-        <a href="/" className="text-white text-2xl font-bold">My Blog</a>
+        <a href="/" className="text-white text-2xl font-bold">Blog</a>
         <div>
           {user && (
             <button onClick={signOut} className="text-white">Sign out</button>
