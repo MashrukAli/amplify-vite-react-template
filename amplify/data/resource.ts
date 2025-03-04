@@ -11,6 +11,14 @@ const schema = a.schema({
     .model({
       content: a.string(),
       imagePath: a.string(),
+      title: a.string(),
+      price: a.float(),
+      type: a.string(),
+      size: a.string(),
+      age: a.string(),
+      additionalImages: a.string().array(),
+      description: a.string(),
+      careInstructions: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
 });
