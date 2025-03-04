@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileUploader } from '@aws-amplify/ui-react-storage';
-import { TextField, Button, Flex, Heading, Card } from '@aws-amplify/ui-react';
+import { TextField, Button, Heading, Card } from '@aws-amplify/ui-react';
 import { FiSave, FiUpload } from 'react-icons/fi';
 
 interface CreatePostProps {

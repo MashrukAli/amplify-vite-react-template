@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FileUploader } from '@aws-amplify/ui-react-storage';
-import { TextField, Button, Flex, Heading, Divider, Card } from '@aws-amplify/ui-react';
+import { TextField, Button, Flex, Heading, Card } from '@aws-amplify/ui-react';
 import { StorageImage } from "@aws-amplify/ui-react-storage";
 import type { Schema } from "../../amplify/data/resource";
 import { FiSave, FiX, FiUpload } from 'react-icons/fi';
