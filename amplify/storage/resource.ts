@@ -1,7 +1,7 @@
 import { defineStorage } from "@aws-amplify/backend";
 
 export const storage = defineStorage({
-  name: "todosStorage",
+  name: "bonsaiStorage",
   access: (allow) => ({
     "public/*": [
       allow.guest.to(["read"]),
