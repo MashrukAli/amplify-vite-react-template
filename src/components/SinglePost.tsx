@@ -18,7 +18,7 @@ const SinglePost: React.FC<SinglePostProps> = ({ client }) => {
       if (!id) return;
       try {
         const result = await client.models.Todo.get({ id });
-        setPost(result);
+        setPost(result.data);
       } catch (error) {
         console.error('Error fetching post:', error);
         navigate('/');
@@ -31,6 +31,8 @@ const SinglePost: React.FC<SinglePostProps> = ({ client }) => {
   if (!post) {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
+
+  console.log('Post data:', post);
 
   const allImages = [post.imagePath, ...(post.additionalImages || [])].filter(Boolean);
 
