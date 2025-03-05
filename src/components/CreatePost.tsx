@@ -10,7 +10,7 @@ interface CreatePostProps {
 
 const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
   const [title, setTitle] = useState('');
-  const [price, setPrice] = useState<number | undefined>();
+  const [price, setPrice] = useState<number>(0);
   const [type, setType] = useState('');
   const [size, setSize] = useState('');
   const [age, setAge] = useState('');
@@ -42,7 +42,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
 
       // Reset form
       setTitle('');
-      setPrice(undefined);
+      setPrice(0);
       setType('');
       setSize('');
       setAge('');
@@ -78,7 +78,7 @@ const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
               <TextField
                 label="Monthly Price ($)"
                 type="number"
-                value={price}
+                value={price || 0}
                 onChange={(e) => setPrice(Number(e.target.value))}
                 required
                 className="w-full"
