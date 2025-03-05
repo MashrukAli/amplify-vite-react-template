@@ -1,118 +1,125 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { StorageImage } from "@aws-amplify/ui-react-storage";
-import { Button, Heading, Text, View } from '@aws-amplify/ui-react';
 import type { Schema } from "../../amplify/data/resource";
 
 interface SinglePostProps {
   client: any;
 }
 
-// Define a type for the nested data structure
-interface PostResponse {
-  data: Schema["Todo"]["type"];
-}
-
 const SinglePost: React.FC<SinglePostProps> = ({ client }) => {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [post, setPost] = useState<PostResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [post, setPost] = useState<Schema["Todo"]["type"] | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchPost = async () => {
-      if (!id) {
-        setError("No post ID provided");
-        setLoading(false);
-        return;
-      }
-      
+      if (!id) return;
       try {
-        console.log("Fetching post with ID:", id);
-        const postData = await client.models.Todo.get({ id });
-        console.log("Post data received:", postData);
-        
-        if (!postData) {
-          setError("Post not found");
-        } else {
-          setPost(postData);
-        }
+        const result = await client.models.Todo.get({ id });
+        setPost(result.data);
       } catch (error) {
-        console.error("Error fetching post:", error);
-        setError(`Error fetching post: ${error instanceof Error ? error.message : String(error)}`);
-      } finally {
-        setLoading(false);
+        console.error('Error fetching post:', error);
+        navigate('/');
       }
     };
 
     fetchPost();
-  }, [id, client]);
+  }, [id, client, navigate]);
 
-  if (loading) {
-    return <div className="text-center py-8">Loading post...</div>;
+  if (!post) {
+    return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
 
-  if (error) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-xl mb-4 text-red-500">{error}</p>
-        <Button onClick={() => navigate('/')}>Back to Home</Button>
-      </div>
-    );
-  }
+  console.log('Post data:', post);
 
-  if (!post || !post.data) {
-    return (
-      <div className="text-center py-8">
-        <p className="text-xl mb-4">Post not found</p>
-        <Button onClick={() => navigate('/')}>Back to Home</Button>
-      </div>
-    );
-  }
+  const allImages = [post.imagePath, ...(post.additionalImages || [])].filter(Boolean);
 
-  // Access the post data from the nested structure
-  const postData = post.data;
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  };
 
   return (
-    <div className="max-w-3xl mx-auto py-8">
-      <Button 
+    <div className="container mx-auto px-4 py-8">
+      <button 
         onClick={() => navigate('/')}
-        className="mb-6"
+        className="mb-4 text-blue-600 hover:text-blue-800"
       >
-        ← Back to Posts
-      </Button>
-      
-      <View className="bg-white shadow-lg rounded-lg overflow-hidden">
-        {postData.imagePath && (
-          <div className="w-full">
-            <StorageImage
-              path={postData.imagePath}
-              alt={postData.content || "Blog post image"}
-              className="w-full h-64 object-cover"
-            />
+        ← Back to Bonsai List
+      </button>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Image Slideshow */}
+        <div className="relative">
+          <div className="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden">
+            {allImages[currentImageIndex] && (
+              <StorageImage
+                path={allImages[currentImageIndex]}
+                alt={post.title || "Bonsai image"}
+                className="w-full h-[500px] object-cover rounded-lg"
+              />
+            )}
           </div>
-        )}
-        
-        <div className="p-6">
-          <Heading level={2} className="text-2xl font-bold mb-4">
-            {postData.content}
-          </Heading>
-          
-          <Text className="text-gray-600">
-            {/* If you had more content fields, you could display them here */}
-            {postData.content}
-          </Text>
+          {allImages.length > 1 && (
+            <div className="absolute top-1/2 transform -translate-y-1/2 w-full flex justify-between px-4">
+              <button 
+                onClick={prevImage}
+                className="bg-black bg-opacity-50 text-white p-2 rounded-full"
+              >
+                ←
+              </button>
+              <button 
+                onClick={nextImage}
+                className="bg-black bg-opacity-50 text-white p-2 rounded-full"
+              >
+                →
+              </button>
+            </div>
+          )}
         </div>
-      </View>
-      
-      {/* Debug information */}
-      <div className="mt-8 p-4 bg-gray-100 rounded-lg">
-        <p className="font-bold">Debug Info:</p>
-        <p>Post ID: {id}</p>
-        <pre className="mt-2 bg-gray-200 p-2 rounded overflow-auto">
-          {JSON.stringify(post, null, 2)}
-        </pre>
+
+        {/* Bonsai Details */}
+        <div className="space-y-6">
+          <h1 className="text-3xl font-bold">{post.title}</h1>
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <p className="text-2xl font-bold text-green-600 mb-4">
+              ${post.price}/month
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h3 className="font-semibold">Type</h3>
+                <p>{post.type}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Size</h3>
+                <p>{post.size}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Age</h3>
+                <p>{post.age}</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold mb-2">Description</h2>
+            <p className="text-gray-700">{post.description}</p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-bold mb-2">Care Instructions</h2>
+            <p className="text-gray-700">{post.careInstructions}</p>
+          </div>
+
+          <button className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">
+            Rent This Bonsai
+          </button>
+        </div>
       </div>
     </div>
   );

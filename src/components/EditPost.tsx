@@ -1,22 +1,25 @@
 import React, { useState } from 'react';
 import { FileUploader } from '@aws-amplify/ui-react-storage';
-import { TextField, Button, Heading, Card } from '@aws-amplify/ui-react';
-import { FiSave, FiUpload } from 'react-icons/fi';
+import { TextField, Button, Flex, Heading, Card } from '@aws-amplify/ui-react';
+import { StorageImage } from "@aws-amplify/ui-react-storage";
+import type { Schema } from "../../amplify/data/resource";
+import { FiSave, FiX, FiUpload } from 'react-icons/fi';
 
-interface CreatePostProps {
+interface EditPostProps {
   client: any;
-  onSuccess?: () => void;
+  post: Schema["Todo"]["type"];
+  onCancel: () => void;
 }
 
-const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
-  const [title, setTitle] = useState('');
-  const [price, setPrice] = useState<number | undefined>();
-  const [type, setType] = useState('');
-  const [size, setSize] = useState('');
-  const [age, setAge] = useState('');
-  const [description, setDescription] = useState('');
-  const [careInstructions, setCareInstructions] = useState('');
-  const [imagePath, setImagePath] = useState('');
+const EditPost: React.FC<EditPostProps> = ({ client, post, onCancel }) => {
+  const [title, setTitle] = useState(post.title || '');
+  const [price, setPrice] = useState<number | undefined>(post.price ?? undefined);
+  const [type, setType] = useState(post.type || '');
+  const [size, setSize] = useState(post.size || '');
+  const [age, setAge] = useState(post.age || '');
+  const [description, setDescription] = useState(post.description || '');
+  const [careInstructions, setCareInstructions] = useState(post.careInstructions || '');
+  const [imagePath, setImagePath] = useState(post.imagePath || '');
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -29,7 +32,8 @@ const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
 
     setIsSaving(true);
     try {
-      await client.models.Todo.create({
+      await client.models.Todo.update({
+        id: post.id,
         title,
         price,
         type,
@@ -39,22 +43,12 @@ const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
         careInstructions,
         imagePath,
       });
-
-      // Reset form
-      setTitle('');
-      setPrice(undefined);
-      setType('');
-      setSize('');
-      setAge('');
-      setDescription('');
-      setCareInstructions('');
-      setImagePath('');
       
-      alert('Bonsai listing created successfully!');
-      if (onSuccess) onSuccess();
+      alert('Bonsai listing updated successfully!');
+      onCancel();
     } catch (error) {
-      console.error('Error creating post:', error);
-      alert('Failed to create bonsai listing. Please try again.');
+      console.error('Error updating post:', error);
+      alert('Failed to update bonsai listing. Please try again.');
     } finally {
       setIsSaving(false);
     }
@@ -141,9 +135,28 @@ const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
           <Card>
             <Heading level={5} className="mb-4">Bonsai Image</Heading>
             
-            <div className="mb-4">
+            <div className="mb-6">
+              {imagePath ? (
+                <div className="relative">
+                  <StorageImage
+                    path={imagePath}
+                    alt={title || "Bonsai image"}
+                    className="w-full h-64 object-cover rounded-lg"
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <p className="text-white text-center px-4">Current image</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <p className="text-gray-500">No image available</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="border-t pt-4">
               <p className="font-medium mb-2 flex items-center gap-2">
-                <FiUpload /> Upload Image
+                <FiUpload /> Upload New Image
               </p>
               <FileUploader
                 acceptedFileTypes={['image/*']}
@@ -162,23 +175,34 @@ const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
               {isUploading && (
                 <p className="text-blue-600 mt-2">Uploading image...</p>
               )}
-              {imagePath && (
-                <p className="text-green-600 mt-2">Image uploaded successfully!</p>
-              )}
             </div>
           </Card>
 
           <div className="mt-8">
-            <Button 
-              type="submit" 
-              variation="primary"
-              isLoading={isSaving}
-              isDisabled={isUploading || isSaving}
-              loadingText="Creating..."
-              className="w-full flex items-center justify-center gap-1"
-            >
-              <FiSave /> Create Bonsai Listing
-            </Button>
+            <p className="text-sm text-gray-500 mb-4">
+              Last updated: {new Date(post.updatedAt || '').toLocaleString()}
+            </p>
+            
+            <Flex direction="row" gap="1rem" justifyContent="flex-end">
+              <Button 
+                onClick={onCancel} 
+                variation="link"
+                isDisabled={isSaving}
+                className="flex items-center gap-1"
+              >
+                <FiX /> Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                variation="primary"
+                isLoading={isSaving}
+                isDisabled={isUploading || isSaving}
+                loadingText="Saving..."
+                className="flex items-center gap-1"
+              >
+                <FiSave /> Save Changes
+              </Button>
+            </Flex>
           </div>
         </div>
       </div>
@@ -186,4 +210,4 @@ const CreatePost: React.FC<CreatePostProps> = ({ client, onSuccess }) => {
   );
 };
 
-export default CreatePost;
+export default EditPost; 
