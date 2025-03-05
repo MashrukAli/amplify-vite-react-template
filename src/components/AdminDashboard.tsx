@@ -8,9 +8,10 @@ import { Button } from '@aws-amplify/ui-react';
 interface AdminDashboardProps {
   posts: Array<Schema["Todo"]["type"]>;
   client: any;
+  signOut: () => void;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ posts, client }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ posts, client, signOut }) => {
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
 
   const deletePost = (id: string) => {
@@ -29,7 +30,15 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ posts, client }) => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+        <button 
+          onClick={() => signOut()}
+          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        >
+          Sign Out
+        </button>
+      </div>
       <CreatePost client={client} onSuccess={() => {}} />
       
       <div className="mt-8">
