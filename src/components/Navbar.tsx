@@ -1,25 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-interface NavbarProps {
-  isAuthenticated: boolean;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ isAuthenticated }) => {
+const Navbar: React.FC = () => {
   return (
-    <nav className="bg-blue-600 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-white text-2xl font-bold">Bonsai Shop</Link>
+    <nav className="bg-green-800 text-white shadow-md">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold">Bonsai Rental</Link>
         <div className="flex items-center space-x-4">
-          {isAuthenticated ? (
-            <Link to="/admin" className="text-white hover:text-blue-200">
-              Admin Dashboard
-            </Link>
-          ) : (
-            <Link to="/admin" className="text-white hover:text-blue-200">
-              Admin Login
-            </Link>
-          )}
+          <Link to="/" className="hover:text-green-200">Browse</Link>
+          <a href="https://jwpqgsxvee.ap-northeast-1.awsapprunner.com/admin" target="_blank" rel="noopener noreferrer" className="hover:text-green-200">
+            Strapi Admin
+          </a>
         </div>
       </div>
     </nav>

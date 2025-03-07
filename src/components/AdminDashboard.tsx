@@ -1,33 +1,11 @@
-import React, { useState } from 'react';
-import CreatePost from './CreatePost';
-import EditPost from './EditPost';
-import { StorageImage } from "@aws-amplify/ui-react-storage";
-import type { Schema } from "../../amplify/data/resource";
-import { Button } from '@aws-amplify/ui-react';
+import React from 'react';
 
 interface AdminDashboardProps {
-  posts: Array<Schema["Todo"]["type"]>;
-  client: any;
+  posts: any[];
   signOut: () => void;
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ posts, client, signOut }) => {
-  const [editingPostId, setEditingPostId] = useState<string | null>(null);
-
-  const deletePost = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this bonsai?")) {
-      client.models.Todo.delete({ id });
-    }
-  };
-
-  const toggleEdit = (postId: string) => {
-    if (editingPostId === postId) {
-      setEditingPostId(null);
-    } else {
-      setEditingPostId(postId);
-    }
-  };
-
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ posts, signOut }) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -39,54 +17,43 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ posts, client, signOut 
           Sign Out
         </button>
       </div>
-      <CreatePost client={client} onSuccess={() => {}} />
+      
+      <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+        <h2 className="text-2xl font-bold mb-4">Manage Content in Strapi</h2>
+        <p className="mb-4">
+          Your content is now managed through the Strapi CMS. Click the button below to open the Strapi admin panel.
+        </p>
+        <a 
+          href="https://jwpqgsxvee.ap-northeast-1.awsapprunner.com/admin" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 inline-block"
+        >
+          Open Strapi Admin
+        </a>
+      </div>
       
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Manage Posts</h2>
+        <h2 className="text-2xl font-bold mb-4">Current Bonsai Listings</h2>
         <div className="grid grid-cols-1 gap-4">
           {posts.map((post) => (
             <div key={post.id} className="bg-white shadow-md rounded-lg overflow-hidden">
               <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  {post.imagePath && (
-                    <StorageImage
-                      path={post.imagePath}
-                      alt={post.title || "Bonsai image"}
+                  {post.attributes.mainImage?.data && (
+                    <img
+                      src={`http://localhost:1337${post.attributes.mainImage.data.attributes.url}`}
+                      alt={post.attributes.title || "Bonsai image"}
                       className="w-24 h-24 object-cover rounded"
                     />
                   )}
                   <div>
-                    <h3 className="text-xl font-bold">{post.title}</h3>
-                    <p className="text-gray-600">{post.type}</p>
-                    <p className="text-green-600 font-bold">${post.price}/month</p>
+                    <h3 className="text-xl font-bold">{post.attributes.title}</h3>
+                    <p className="text-gray-600">{post.attributes.type}</p>
+                    <p className="text-green-600 font-bold">${post.attributes.price}/month</p>
                   </div>
                 </div>
-                <div className="flex space-x-2">
-                  <Button 
-                    onClick={() => toggleEdit(post.id)}
-                    variation="primary"
-                  >
-                    {editingPostId === post.id ? 'Cancel Edit' : 'Edit'}
-                  </Button>
-                  <button 
-                    onClick={() => deletePost(post.id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </div>
               </div>
-              
-              {/* Expandable edit section */}
-              {editingPostId === post.id && (
-                <div className="border-t border-gray-200 p-4 bg-gray-50">
-                  <EditPost 
-                    client={client} 
-                    post={post} 
-                    onCancel={() => setEditingPostId(null)} 
-                  />
-                </div>
-              )}
             </div>
           ))}
         </div>

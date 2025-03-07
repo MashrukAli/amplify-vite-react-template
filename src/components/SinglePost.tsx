@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from 'react';
+// src/components/SinglePost.tsx
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { StorageImage } from "@aws-amplify/ui-react-storage";
-import type { Schema } from "../../amplify/data/resource";
+import { fetchBonsaiById, getStrapiImageUrl } from '../services/strapiService';
 
-interface SinglePostProps {
-  client: any;
-}
-
-const SinglePost: React.FC<SinglePostProps> = ({ client }) => {
+const SinglePost: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [post, setPost] = useState<Schema["Todo"]["type"] | null>(null);
+  const [post, setPost] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchPost = async () => {
       if (!id) return;
       try {
-        const result = await client.models.Todo.get({ id });
-        setPost(result.data);
+        setLoading(true);
+        console.log(`Fetching post with ID: ${id}`);
+        const result = await fetchBonsaiById(id);
+        console.log('Single post data:', result);
+        setPost(result);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching post:', error);
         navigate('/');
@@ -26,15 +27,23 @@ const SinglePost: React.FC<SinglePostProps> = ({ client }) => {
     };
 
     fetchPost();
-  }, [id, client, navigate]);
+  }, [id, navigate]);
 
-  if (!post) {
+  if (loading) {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
 
-  console.log('Post data:', post);
+  if (!post) {
+    return <div className="container mx-auto px-4 py-8">Bonsai not found</div>;
+  }
 
-  const allImages = [post.imagePath, ...(post.additionalImages || [])].filter(Boolean);
+  // Prepare images array
+  const mainImageUrl = post.MainImage ? getStrapiImageUrl(post.MainImage) : null;
+  
+  const additionalImageUrls = post.AdditionalImages ? 
+    post.AdditionalImages.map((img: any) => getStrapiImageUrl(img)) : [];
+  
+  const allImages = [mainImageUrl, ...additionalImageUrls].filter(Boolean);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
@@ -57,10 +66,10 @@ const SinglePost: React.FC<SinglePostProps> = ({ client }) => {
         {/* Image Slideshow */}
         <div className="relative">
           <div className="aspect-w-4 aspect-h-3 rounded-lg overflow-hidden">
-            {allImages[currentImageIndex] && (
-              <StorageImage
-                path={allImages[currentImageIndex]}
-                alt={post.title || "Bonsai image"}
+            {allImages.length > 0 && allImages[currentImageIndex] && (
+              <img
+                src={allImages[currentImageIndex]}
+                alt={post.Title || "Bonsai image"}
                 className="w-full h-[500px] object-cover rounded-lg"
               />
             )}
@@ -84,41 +93,31 @@ const SinglePost: React.FC<SinglePostProps> = ({ client }) => {
         </div>
 
         {/* Bonsai Details */}
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold">{post.title}</h1>
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <p className="text-2xl font-bold text-green-600 mb-4">
-              ${post.price}/month
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h3 className="font-semibold">Type</h3>
-                <p>{post.type}</p>
-              </div>
-              <div>
-                <h3 className="font-semibold">Size</h3>
-                <p>{post.size}</p>
-              </div>
-              <div>
-                <h3 className="font-semibold">Age</h3>
-                <p>{post.age}</p>
-              </div>
+        <div>
+          <h1 className="text-3xl font-bold mb-2">{post.Title || post.Type}</h1>
+          <p className="text-gray-600 mb-2">{post.Type}</p>
+          <p className="text-green-600 font-bold text-2xl mb-4">${post.Price}/month</p>
+          
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="bg-gray-100 p-3 rounded">
+              <p className="font-semibold">Size</p>
+              <p>{post.Size}</p>
+            </div>
+            <div className="bg-gray-100 p-3 rounded">
+              <p className="font-semibold">Age</p>
+              <p>{post.Age}</p>
             </div>
           </div>
-
-          <div>
+          
+          <div className="mb-6">
             <h2 className="text-xl font-bold mb-2">Description</h2>
-            <p className="text-gray-700">{post.description}</p>
+            <div className="prose" dangerouslySetInnerHTML={{ __html: post.Description }} />
           </div>
-
+          
           <div>
             <h2 className="text-xl font-bold mb-2">Care Instructions</h2>
-            <p className="text-gray-700">{post.careInstructions}</p>
+            <div className="prose" dangerouslySetInnerHTML={{ __html: post.CareInstructions }} />
           </div>
-
-          <button className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors">
-            Rent This Bonsai
-          </button>
         </div>
       </div>
     </div>
