@@ -1,7 +1,10 @@
 // src/services/strapiService.ts
 import axios from 'axios';
 
-const API_URL = 'https://jwpqgsxvee.ap-northeast-1.awsapprunner.com/api';
+// Use environment variables or conditional logic for different environments
+const API_URL = import.meta.env.PROD 
+  ? 'https://jwpqgsxvee.ap-northeast-1.awsapprunner.com/api'
+  : 'http://localhost:1337/api';
 
 export const fetchBonsaiList = async () => {
   try {
@@ -33,26 +36,29 @@ export const fetchBonsaiById = async (id: string) => {
   }
 };
 
-// Helper function to get the full image URL
+// Update the image URL helper function
 export const getStrapiImageUrl = (imageData: any) => {
   if (!imageData) return null;
   
+  const baseUrl = import.meta.env.PROD
+    ? 'https://jwpqgsxvee.ap-northeast-1.awsapprunner.com'
+    : 'http://localhost:1337';
+  
   if (imageData.attributes && imageData.attributes.url) {
-    // Check if it's already an absolute URL (S3)
     if (imageData.attributes.url.startsWith('http')) {
       return imageData.attributes.url;
     }
-    return `https://jwpqgsxvee.ap-northeast-1.awsapprunner.com${imageData.attributes.url}`;
+    return `${baseUrl}${imageData.attributes.url}`;
   } else if (typeof imageData === 'string') {
     if (imageData.startsWith('http')) {
       return imageData;
     }
-    return `https://jwpqgsxvee.ap-northeast-1.awsapprunner.com${imageData}`;
+    return `${baseUrl}${imageData}`;
   } else if (imageData.url) {
     if (imageData.url.startsWith('http')) {
       return imageData.url;
     }
-    return `https://jwpqgsxvee.ap-northeast-1.awsapprunner.com${imageData.url}`;
+    return `${baseUrl}${imageData.url}`;
   }
   
   return null;
