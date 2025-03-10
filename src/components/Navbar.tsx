@@ -1,15 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <nav className="bg-green-800 text-white shadow-md">
-      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-bold">Bonsai Rental</Link>
-        <div className="flex items-center space-x-4">
-          <Link to="/" className="hover:text-green-200">Browse</Link>
-          <a href="https://jwpqgsxvee.ap-northeast-1.awsapprunner.com/admin" target="_blank" rel="noopener noreferrer" className="hover:text-green-200">
-            Strapi Admin
+    <nav className={`fixed w-full z-50 transition-all duration-300 ${
+      isScrolled ? 'text-green-800 shadow-md py-2' : 'bg-transparent text-white py-4'
+    }`}>
+      <div className="container mx-auto px-4 flex justify-between items-center">
+        <Link to="/" className="text-2xl font-serif font-bold">Bonsai Rental</Link>
+        <div className="flex items-center space-x-6">
+          <Link to="/" className="hover:text-green-500 transition-colors duration-200">Home</Link>
+          <Link to="/" className="hover:text-green-500 transition-colors duration-200">Collection</Link>
+          <a 
+            href="https://jwpqgsxvee.ap-northeast-1.awsapprunner.com/admin"   
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="hover:text-green-500 transition-colors duration-200"
+          >
+            Admin
+          </a>
+          <a 
+            href="#contact" 
+            className={`px-4 py-2 rounded-full border ${
+              isScrolled 
+                ? 'border-green-800 hover:bg-green-800 hover:text-white' 
+                : 'border-white hover:bg-white hover:text-green-800'
+            } transition-colors duration-200`}
+          >
+            Contact
           </a>
         </div>
       </div>

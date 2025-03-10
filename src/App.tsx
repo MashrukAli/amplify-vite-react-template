@@ -5,6 +5,9 @@ import Navbar from './components/Navbar';
 import BlogList from './components/BlogList';
 import SinglePost from './components/SinglePost';
 import Footer from './components/Footer';
+import DoorAnimation from './components/DoorAnimation';
+import FadeInSection from './components/FadeInSection';
+import FadeInSectionReverse from './components/FadeInSectionReverse';
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -22,13 +25,31 @@ function App() {
     loadBonsaiData();
   }, []);
 
+  // Use the specified bonsai image for the door animation
+  const backgroundImage = 'https://www.aesdes.org/wp-content/uploads/2024/01/IMG_0124.jpeg';
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
         <Navbar />
         <main className="flex-grow">
           <Routes>
-            <Route path="/" element={<BlogList posts={posts} />} />
+            <Route path="/" element={
+              <>
+                <DoorAnimation backgroundImage={backgroundImage} />
+                <FadeInSection 
+                  image="https://th.bing.com/th/id/OIP.cZnviLjCg3jE5wrhd06USgAAAA?rs=1&pid=ImgDetMain"
+                  title="The Art of Bonsai"
+                  description="Bonsai is the ancient Japanese art form of growing and training miniature trees in containers. Dating back over a thousand years, this practice combines horticultural techniques and artistic design to create living sculptures that embody harmony, balance, and tranquility. Each bonsai tells a unique story through its carefully shaped branches, weathered trunk, and meticulously maintained foliage."
+                />
+                <FadeInSectionReverse
+                  image="https://images.unsplash.com/photo-1611387729672-25583e070328?q=80&w=1000"
+                  title="Cultivating Tranquility"
+                  description="The practice of bonsai cultivation is as much about personal growth as it is about nurturing the tree. It teaches patience, mindfulness, and respect for nature's rhythms. Through careful pruning, wiring, and repotting, bonsai artists guide their trees into harmonious forms that reflect both natural beauty and artistic vision. This delicate balance creates a living meditation that can bring peace and focus to our busy modern lives."
+                />
+                <BlogList posts={posts} />
+              </>
+            } />
             <Route path="/bonsai/:id" element={<SinglePost />} />
           </Routes>
         </main>
