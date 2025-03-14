@@ -4,11 +4,13 @@ import { fetchBonsaiList } from './services/strapiService';
 import Navbar from './components/Navbar';
 import BlogList from './components/BlogList';
 import SinglePost from './components/SinglePost';
+import CollectionPage from './components/Pages/CollectionPage';
 import Footer from './components/Footer';
 import DoorAnimation from './components/DoorAnimation';
 import FadeInSection from './components/FadeInSection';
 import FadeInSectionReverse from './components/FadeInSectionReverse';
-
+import LeasePage from './components/Pages/LeasePage'; 
+import CompanyPage from './components/Pages/CompanyPage';
 function App() {
   const [posts, setPosts] = useState([]);
   
@@ -50,6 +52,9 @@ function App() {
                 <BlogList posts={posts} />
               </>
             } />
+            <Route path="/collection" element={<CollectionPage />} />
+            <Route path="/lease" element={<LeasePage />} />
+            <Route path="/company" element={<CompanyPage />} />
             <Route path="/bonsai/:id" element={<SinglePost />} />
           </Routes>
         </main>

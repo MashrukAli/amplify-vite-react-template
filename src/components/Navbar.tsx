@@ -19,13 +19,15 @@ const Navbar: React.FC = () => {
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${
-      isScrolled ? 'text-green-800 shadow-md py-2' : 'bg-transparent text-white py-4'
+      isScrolled ? 'bg- text-green-800 shadow-md py-2' : 'bg-transparent text-white py-4'
     }`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-serif font-bold">Bonsai Rental</Link>
+        <Link to="/" className="text-2xl font-serif font-bold">心綺園</Link>
         <div className="flex items-center space-x-6">
           <Link to="/" className="hover:text-green-500 transition-colors duration-200">Home</Link>
-          <Link to="/" className="hover:text-green-500 transition-colors duration-200">Collection</Link>
+          <Link to="/collection" className="hover:text-green-500 transition-colors duration-200">Collection</Link>
+          <Link to="/lease" className="hover:text-green-500 transition-colors duration-200">Lease</Link>
+          <Link to="/company" className="hover:text-green-500 transition-colors duration-200">Company</Link>
           <a 
             href="https://jwpqgsxvee.ap-northeast-1.awsapprunner.com/admin"   
             target="_blank" 
