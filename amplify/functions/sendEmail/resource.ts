@@ -34,4 +34,3 @@ const createSendEmailFunction = (scope: Construct) => {
   return fn;
 };
 
-export const sendEmail = defineFunction(createSendEmailFunction);
