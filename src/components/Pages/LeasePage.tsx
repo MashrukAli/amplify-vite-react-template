@@ -269,7 +269,7 @@ const LeasePage: React.FC = () => {
             visibleSections.faq ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <h2 className="text-3xl font-serif mb-16 text-center text-white">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-serif mb-16 text-center text-white">Frequently Asked Questions (FAQ)</h2>
           
           <div className="max-w-3xl mx-auto">
             {faqItems.map((item, index) => (

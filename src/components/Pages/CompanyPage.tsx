@@ -59,7 +59,6 @@ const ParallaxImage: React.FC<{src: string; alt: string}> = ({ src, alt }) => {
       if (!imageRef.current) return;
       
       const { top } = imageRef.current.getBoundingClientRect();
-      const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
       
       // Calculate parallax effect

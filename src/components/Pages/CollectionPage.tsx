@@ -119,7 +119,7 @@ const ScrollText = () => {
 
 // Main CollectionPage component
 const CollectionPage: React.FC = () => {
-  const [scrolledPast3D, setScrolledPast3D] = useState(false);
+  const [_scrolledPast3D, setScrolledPast3D] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [leftTextVisible, setLeftTextVisible] = useState(false);
   const [rightTextVisible, setRightTextVisible] = useState(false);
