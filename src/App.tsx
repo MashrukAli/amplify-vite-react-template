@@ -28,7 +28,7 @@ function App() {
   }, []);
 
   // Use the specified bonsai image for the door animation
-  const backgroundImage = 'https://www.aesdes.org/wp-content/uploads/2024/01/IMG_0124.jpeg';
+  const backgroundImage = 'https://coa-en-strapi-media.s3.ap-northeast-1.amazonaws.com/a_beautiful_bonsai_tree_surrounded_by_lush_greenery_and_rocks_radiating_tranquility_free_photo_9ded2cdbb3.jpg';
 
   return (
     <Router>

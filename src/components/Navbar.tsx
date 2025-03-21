@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
       isScrolled ? 'bg- text-green-800 shadow-md py-2' : 'bg-transparent text-white py-4'
     }`}>
       <div className="container mx-auto px-4 flex justify-between items-center">
-        <Link to="/" className="text-2xl font-serif font-bold">心綺園</Link>
+        <Link to="/" className="text-2xl font-serif font-bold">心綺園 test</Link>
         <div className="flex items-center space-x-6">
           <Link to="/" className="hover:text-green-500 transition-colors duration-200">Home</Link>
           <Link to="/collection" className="hover:text-green-500 transition-colors duration-200">Collection</Link>
